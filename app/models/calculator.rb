@@ -1,28 +1,18 @@
 class Calculator
     def add(str)
-        if str.empty?
-            return 0
-        end
+        return 0 if str.empty?
 
         if str.start_with?("//")
-            delimiter = str.slice(2)
-            numbers = str.slice(4,str.length)
-            numbers = numbers.gsub("\n",delimiter)
+            delimiter, numbers = str.split("\n",2)
+            delimiter = delimiter[2..]
         else
             delimiter = ","
             numbers = str
-            numbers = numbers.gsub("\n",delimiter)
         end
-        numbers = numbers.split(delimiter)
-        final_numbers = []
-        numbers.each do |n|
-            final_numbers << n.to_i
-        end
-        final_numbers.each do |n|
-            if n.negative?
-                raise ArgumentError, "negative numbers not allowed"
-            end
-        end
-        final_numbers.sum
+        numbers = numbers.gsub("\n",delimiter)
+        numbers = numbers.split(delimiter).map(&:to_i)
+        negative_numbers = numbers.select(&:negative?)
+        raise ArgumentError, "negative numbers not allowed = #{negative_numbers.join(",")}" if negative_numbers.any?
+        numbers.sum
     end
 end
